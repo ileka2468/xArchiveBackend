@@ -32,6 +32,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @Log4j2
@@ -78,8 +79,11 @@ public class AuthController {
         User user = new User();
         user.setUsername(registerRequest.getUsername());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setFirstName(registerRequest.getFirstName());
-        user.setLastName(registerRequest.getLastName());
+        String firstname = registerRequest.getName().split(" ")[0];
+        String lastname = registerRequest.getName().split(" ")[1];
+
+        user.setFirstName(firstname);
+        user.setLastName(lastname);
         user.setEnabled(true);
 
         userRepository.save(user);
@@ -97,20 +101,41 @@ public class AuthController {
             roleRepository.save(userRole);
             userRole = roleRepository.findByRoleName("ROLE_USER");
             if (userRole == null) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to assign role to user.");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to create role.");
             }
         }
 
-        UserRole userRoleLink = new UserRole();
-        UserRoleId userRoleId = new UserRoleId();
-        userRoleId.setUserId(user.getId());
-        userRoleId.setRoleId(userRole.getId());
-        userRoleLink.setId(userRoleId);
-        userRoleLink.setUser(user);
-        userRoleLink.setRole(userRole);
-        userRoleRepository.save(userRoleLink);
+        try {
+            UserRole userRoleLink = new UserRole();
+            UserRoleId userRoleId = new UserRoleId();
+            userRoleId.setUserId(user.getId());
+            userRoleId.setRoleId(userRole.getId());
+            userRoleLink.setId(userRoleId);
+            userRoleLink.setUser(user);
+            userRoleLink.setRole(userRole);
+            userRoleRepository.save(userRoleLink);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to assign role to user.");
+        }
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            registerRequest.getUsername(),
+                            registerRequest.getPassword()
+                    )
+
+            );
+
+            AuthResponse authResponse = tokenProvider.getTokens(authentication);
+            response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + authResponse.getAccessToken());
+            response.addCookie(authResponse.getRefreshCookie());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to authenticate user after registration.");
+        }
+
+        return ResponseEntity.ok(new AuthDataResponse(user.getUsername(), user.getFirstName(), user.getLastName()));
     }
 
     @PostMapping("/login")
@@ -191,6 +216,19 @@ public class AuthController {
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<?> getAuthedUserData(HttpServletRequest request) {
+        String accessToken = tokenProvider.getJwtFromRequest(request);
+        String username = tokenProvider.getUsernameFromJWT(accessToken);
+        User user = customUserDetailsService.getUserByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unable to retrieve user.");
+        }
+
+        return ResponseEntity.ok(new AuthDataResponse(user.getUsername(), user.getFirstName(), user.getLastName()));
     }
 
 }

@@ -133,7 +133,7 @@ public class JwtTokenProvider {
         refreshTokenCookie.setSecure(env.equals("dev") ? false : true);
         refreshTokenCookie.setPath("/api/auth/");
         if (!env.equals("dev")) {
-            refreshTokenCookie.setDomain("blueroomies.com");
+            refreshTokenCookie.setDomain("xarchive.store");
         }
         refreshTokenCookie.setMaxAge(refreshtokenExpirationInMs / 1000);
 

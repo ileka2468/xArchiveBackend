@@ -33,7 +33,6 @@ public class Config {
                 .refreshTokenExpirationInMs(Integer.parseInt(Objects.requireNonNull(env.getProperty("app.refreshtokenExpirationInMs"))))
                 .env(env.getProperty("app.viteNodeEnv"))
                 .build();
-        System.out.println(props.getEnv());
         return props;
     }
 
