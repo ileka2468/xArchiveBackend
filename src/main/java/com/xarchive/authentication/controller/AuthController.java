@@ -11,6 +11,7 @@ import com.xarchive.authentication.security.JwtTokenProvider;
 import com.xarchive.authentication.service.AuthpinService;
 import com.xarchive.authentication.service.CustomUserDetailsService;
 import com.xarchive.authentication.util.UserPrincipal;
+import com.xarchive.billing.service.StripeService;
 import com.xarchive.emails.service.EmailService;
 import com.xarchive.invalidatedtokens.service.InvalidateTokenService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -71,6 +72,8 @@ public class AuthController {
     private AuthpinService authpinService;
     @Autowired
     private AuthpinRepository authpinRepository;
+    @Autowired
+    private StripeService stripeService;
 
 
     @PostMapping("/register")
@@ -144,7 +147,15 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to authenticate user after registration.");
         }
 
+        if (!createStripeCustomer(user)) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unable to create stripe.");
+        }
+
         return ResponseEntity.ok(new AuthDataResponse(user.getUsername(), user.getFirstName(), user.getLastName()));
+    }
+
+    public boolean createStripeCustomer(User user) {
+        return stripeService.createCustomer(user);
     }
 
     @PostMapping("/login")

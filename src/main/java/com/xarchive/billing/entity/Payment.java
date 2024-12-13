@@ -20,6 +20,7 @@ import java.time.Instant;
 @Table(name = "payments", schema = "public")
 public class Payment {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "payment_id", nullable = false)
     private Integer id;
 
@@ -29,7 +30,7 @@ public class Payment {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "license_id")
     private License license;
@@ -60,5 +61,9 @@ public class Payment {
     @ColumnDefault("now()")
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
+
+    @NotNull
+    @Column(name = "stripe_payment_intent_id", nullable = false)
+    private String stripePaymentIntentId;
 
 }

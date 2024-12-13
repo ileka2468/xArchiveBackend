@@ -34,6 +34,8 @@ public class Config {
                 .env(env.getProperty("app.viteNodeEnv"))
                 .mailUsername(env.getProperty("spring.mail.username"))
                 .mailPassword(env.getProperty("spring.mail.password"))
+                .stripeApiKey(env.getProperty("app.stripeApiKey"))
+                .stripeWebhookSecret(env.getProperty("app.stripeWebhookSecret"))
                 .build();
         System.out.println(props.getMailPassword() + " " + props.getMailUsername());
         return props;

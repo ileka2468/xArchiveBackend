@@ -1,5 +1,6 @@
-package com.xarchive.licensing.entity;
+package com.xarchive.auditing.entity;
 
+import com.xarchive.licensing.entity.License;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -27,13 +28,12 @@ public class AuditLog {
     @JoinColumn(name = "license_id")
     private License license;
 
-    @Size(max = 50)
     @NotNull
-    @Column(name = "action", nullable = false, length = 50)
+    @Column(name = "action", nullable = false)
     private String action;
 
     @Column(name = "performed_by")
-    private Integer performedBy;
+    private String performedBy;
 
     @NotNull
     @ColumnDefault("now()")
@@ -43,4 +43,6 @@ public class AuditLog {
     @Column(name = "remarks", length = Integer.MAX_VALUE)
     private String remarks;
 
+    @Column(name = "type")
+    private String type;
 }

@@ -45,4 +45,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserRole> userRoles = new HashSet<>();
+
+    @Column(name = "stripe_customer_id")
+    private String stripeCustomerId;
 }

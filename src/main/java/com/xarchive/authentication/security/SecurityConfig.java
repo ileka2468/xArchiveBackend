@@ -53,7 +53,8 @@ public class SecurityConfig {
                             "/api/auth/register",
                             "/api/auth/login",
                             "/api/auth/logout",
-                            "/api/auth/refresh-token"
+                            "/api/auth/refresh-token",
+                            "/api/webhook/stripe"
                     ).permitAll();  // Public routes
 
                     auth.anyRequest().authenticated();  // Protect other routes

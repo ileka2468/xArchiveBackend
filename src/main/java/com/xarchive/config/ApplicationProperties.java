@@ -20,4 +20,6 @@ public class ApplicationProperties {
     private String env;
     private String mailUsername;
     private String mailPassword;
+    private String stripeApiKey;
+    private String stripeWebhookSecret;
 }
