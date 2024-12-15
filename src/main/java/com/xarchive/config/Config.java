@@ -37,7 +37,6 @@ public class Config {
                 .stripeApiKey(env.getProperty("app.stripeApiKey"))
                 .stripeWebhookSecret(env.getProperty("app.stripeWebhookSecret"))
                 .build();
-        System.out.println(props.getMailPassword() + " " + props.getMailUsername());
         return props;
     }
 

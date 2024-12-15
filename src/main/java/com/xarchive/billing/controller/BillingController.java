@@ -4,18 +4,15 @@ import com.stripe.model.checkout.Session;
 import com.xarchive.authentication.entity.User;
 import com.xarchive.authentication.security.JwtTokenProvider;
 import com.xarchive.authentication.service.CustomUserDetailsService;
-import com.xarchive.billing.entity.Payment;
 import com.xarchive.billing.payload.PaymentCenterResponse;
 import com.xarchive.billing.payload.PaymentIntentRequest;
 import com.xarchive.billing.repository.PaymentRepository;
 import com.xarchive.billing.service.StripeService;
-import com.xarchive.webhooks.service.BillingService;
+import com.xarchive.billing.service.BillingService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController()
