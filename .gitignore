@@ -40,3 +40,5 @@ logs/
 
 ## properties file
 #src/main/resources/application.properties
+
+.env
