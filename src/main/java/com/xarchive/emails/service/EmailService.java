@@ -19,7 +19,7 @@ public class EmailService {
 
 
     public boolean sendPinEmail(String to, String subject, String pin) {
-        String filePath = "/templates/email-template.html" // class path for jar
+        String filePath = "/templates/email-template.html"; // class path for jar
         String htmlTemplate = EmailTemplateLoader.loadEmailTemplate(filePath);
 
         if (htmlTemplate == null) {
